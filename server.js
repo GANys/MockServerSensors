@@ -16,11 +16,28 @@ app.use(helmet());
 app.use(cors());
 app.use(compression());
 
-app.get("/info", (req, res) => {
-  // Simple endpoint giving basic information on the API
+app.get("/info_humidity", (req, res) => {
+  // Simple endpoint giving basic information on the Humidity API
   res
     .status(200)
-    .json({description: "A simple API to generate humidity and temperature data", functions: "/humidity, /temperature"});
+    .json({
+      sensorID: "50d9d53e-f303-11ec-b939-0242ac120002",
+      serviceType: "Dummy sensor humidity",
+      linkToSensor: "/info_humidity",
+      linkToObservation: "/humidity"
+    });
+});
+
+app.get("/info_temperature", (req, res) => {
+  // Simple endpoint giving basic information on the Temperature API
+  res
+    .status(200)
+    .json({
+      sensorID: "50d9d53e-f303-11ec-b939-0242ac120002",
+      serviceType: "Dummy sensor temperature",
+      linkToSensor: "/info_temperature",
+      linkToObservation: "/htemperature"
+    });
 });
 
 app.get("/humidity", (req, res) => {
@@ -35,7 +52,10 @@ app.get("/humidity", (req, res) => {
       75 +
       20 * Math.sin(current / (1000 * 60 * 60) / (Math.PI * 2)) +
       5 * (Math.random() * 2 - 1);
-    humidity.push({ time: current, humidity: Number(data.toFixed(2)) });
+    humidity.push({
+      time: { instant: current },
+      value: { value: Number(data.toFixed(2)) },
+    });
   }
 
   res.status(200).json(humidity);
@@ -57,7 +77,10 @@ app.get("/temperature", (req, res) => {
         ) +
       2 * Math.sin(current / (1000 * 60 * 60) / (Math.PI * 2)) +
       1 * (Math.random() * 2 - 1);
-    temperature.push({ time: current, temperature: Number(data.toFixed(2)) });
+      temperature.push({
+        time: { instant: current },
+        value: { value: Number(data.toFixed(2)) },
+      });
   }
 
   res.status(200).json(temperature);
